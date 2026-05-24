@@ -19,7 +19,6 @@ public class DeviceService {
     }
 
     public Device createDevice(Device device) {
-        // TODO: Check the ip address format, ping interval must be between 5 sec to 3600 seconds only (for simplicity), port can be positive number only
         //TODO create new device entry in scheduler for monitoring
         return deviceRepository.insert(device);
     }

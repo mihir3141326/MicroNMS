@@ -1,10 +1,14 @@
 package com.flipkart.learning.controllers;
 
 import com.flipkart.learning.models.Device;
+import com.flipkart.learning.models.DeviceCreateRequest;
 import com.flipkart.learning.models.DeviceResponse;
+import com.flipkart.learning.models.DeviceUpdateRequest;
 import com.flipkart.learning.services.DeviceService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,10 +25,21 @@ public class DeviceController {
     }
 
     // POST request to http://localhost:8080/devices
-    @Post
-    public HttpResponse<Device> createDevice(@Body Device device) {
-        Device createdDevice = deviceService.createDevice(device);
-        return HttpResponse.created(createdDevice); // Returns HTTP 201
+    // @Valid ensures that the constraints defined in the Device Create Request are valid
+    @Post("/create")
+    public HttpResponse<Device> createDevice(@Body @Valid DeviceCreateRequest request) {
+
+        // Map the safe Data Transfer Object (DTO) back to your database model
+        Device newDevice = new Device();
+        newDevice.setIp(request.ip());
+        newDevice.setUsername(request.username());
+        newDevice.setPassword(request.password());
+        newDevice.setTag(request.tag());
+        newDevice.setPort(request.port());
+        newDevice.setPingIntervalInSec(request.pingIntervalInSec());
+
+        Device createdDevice = deviceService.createDevice(newDevice);
+        return HttpResponse.created(createdDevice);
     }
 
     // GET A DEVICE BY IP
@@ -40,16 +55,23 @@ public class DeviceController {
 
     }
 
+
     // UPDATE A DEVICE
     // PUT to http://localhost:8080/devices/192.168.1.10
     @Put("/{ip}")
-    public HttpResponse<String> updateDevice(String ip, @Body Device device) {
+    public HttpResponse<String> updateDevice(
+            // Validates the {ip} in the URL
+            @Pattern(regexp = "^([0-9]{1,3}\\.){3}[0-9]{1,3}$", message = "Invalid IP address format") String ip,
+            // Validates the JSON body
+            @Body @Valid DeviceUpdateRequest request) {
+
+        // If we reach here, BOTH the URL IP and the JSON body are valid.
         boolean updated = deviceService.updateDevice(
                 ip,
-                device.getUsername(),
-                device.getPassword(),
-                device.getPort(),
-                device.getPingIntervalInSec()
+                request.username(),
+                request.password(),
+                request.port(),
+                request.pingIntervalInSec()
         );
 
         if (updated) {
