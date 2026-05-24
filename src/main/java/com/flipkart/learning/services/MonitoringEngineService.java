@@ -48,7 +48,7 @@ public class MonitoringEngineService implements ApplicationEventListener<ServerS
         Runnable monitoringTask = () -> {
             try {
                 // stimulating "SSH" into the device and get data
-                MonitorLog simulatedLog = fetchSimulatedMetrics(device);
+                MonitorLog simulatedLog = fetchSimulatedMetrics();
 
                 // Save it to the database
                 logService.addLogToDevice(device.getIp(), simulatedLog);
@@ -82,7 +82,7 @@ public class MonitoringEngineService implements ApplicationEventListener<ServerS
     }
 
     // random metric data generation
-    private MonitorLog fetchSimulatedMetrics(Device device) {
+    private MonitorLog fetchSimulatedMetrics() {
         MonitorLog log = new MonitorLog();
 
         // Generate random usage between 10.00% and 99.99%
