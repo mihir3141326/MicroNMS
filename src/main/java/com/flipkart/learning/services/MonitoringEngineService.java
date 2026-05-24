@@ -35,9 +35,8 @@ public class MonitoringEngineService implements ApplicationEventListener<ServerS
     @Override
     public void onApplicationEvent(@NonNull ServerStartupEvent event) {
         System.out.println("Starting Monitoring Engine...");
-        deviceService.getAllDevices().forEach(deviceResp -> {
-            deviceService.getDeviceByIp(deviceResp.ip()).ifPresent(this::startOrUpdateMonitoring);
-        });
+        deviceService.getAllDevices().forEach(deviceResp ->
+                deviceService.getDeviceByIp(deviceResp.ip()).ifPresent(this::startOrUpdateMonitoring));
     }
 
     // start or update monitoring of devices
