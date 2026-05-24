@@ -5,6 +5,7 @@ import com.flipkart.learning.models.DeviceCreateRequest;
 import com.flipkart.learning.models.DeviceResponse;
 import com.flipkart.learning.models.DeviceUpdateRequest;
 import com.flipkart.learning.services.DeviceService;
+import com.flipkart.learning.services.MonitoringEngineService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import jakarta.validation.Valid;
@@ -18,10 +19,12 @@ import java.util.Optional;
 public class DeviceController {
 
     private final DeviceService deviceService;
+    private final MonitoringEngineService monitoringEngineService;
 
     // Micronaut automatically injects your Service here
-    public DeviceController(DeviceService deviceService) {
+    public DeviceController(DeviceService deviceService, MonitoringEngineService monitoringEngineService) {
         this.deviceService = deviceService;
+        this.monitoringEngineService = monitoringEngineService;
     }
 
     // POST request to http://localhost:8080/devices
@@ -38,7 +41,11 @@ public class DeviceController {
         newDevice.setPort(request.port());
         newDevice.setPingIntervalInSec(request.pingIntervalInSec());
 
+        // save to db
         Device createdDevice = deviceService.createDevice(newDevice);
+
+        // start monitoring
+        monitoringEngineService.startOrUpdateMonitoring(createdDevice);
         return HttpResponse.created(createdDevice);
     }
 
@@ -74,6 +81,9 @@ public class DeviceController {
                 request.pingIntervalInSec()
         );
 
+        Device updatedDevice = deviceService.getDeviceByIp(ip).get();
+        monitoringEngineService.startOrUpdateMonitoring(updatedDevice); // Cancels the old timer and starts the new one!
+
         if (updated) {
             return HttpResponse.ok("Device updated successfully.");
         } else {
@@ -94,6 +104,8 @@ public class DeviceController {
     public HttpResponse<String> deleteDevice(String ip) {
         boolean deleted = deviceService.deleteDevice(ip);
 
+        // delete from MonitoringEngine too!
+        monitoringEngineService.stopMonitoring(ip); // Pulls the plug
         if (deleted) {
             return HttpResponse.ok("Device deleted successfully.");
         } else {

@@ -53,4 +53,8 @@ public class MonitorLogService {
         long oneWeekAgo = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000L);
         return logRepository.findByDeviceIpAndTimestampGreaterThanEquals(ip, oneWeekAgo);
     }
+
+    public Optional<MonitorLog> getLatestLogForDevice(String ip) {
+        return logRepository.findFirstByDeviceIpOrderByTimestampDesc(ip);
+    }
 }

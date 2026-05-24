@@ -28,4 +28,6 @@ public interface MonitorLogRepository extends CrudRepository<MonitorLog, Long> {
     @Join("device")
     List<MonitorLog> findByDeviceIpAndTimestampGreaterThanEquals(String ip, long timestamp);
 
+    @Join("device")
+    Optional<MonitorLog> findFirstByDeviceIpOrderByTimestampDesc(String ip);
 }

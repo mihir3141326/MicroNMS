@@ -28,7 +28,6 @@ public class DeviceService {
     }
 
     public boolean updateDevice(String ip, String username, String password, long port, long pingInterval) {
-        // TODO: ping interval must be between 5 sec to 3600 seconds only (for simplicity), port can be positive number only
         if (deviceRepository.existsById(ip)) {
             //TODO update device info in scheduler for monitoring
             deviceRepository.updateByIp(ip, username, password, port, pingInterval);
