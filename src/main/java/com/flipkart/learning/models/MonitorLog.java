@@ -1,9 +1,6 @@
 package com.flipkart.learning.models;
 
-import io.micronaut.data.annotation.GeneratedValue;
-import io.micronaut.data.annotation.Id;
-import io.micronaut.data.annotation.MappedEntity;
-import io.micronaut.data.annotation.Relation;
+import io.micronaut.data.annotation.*;
 import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
@@ -14,6 +11,7 @@ public class MonitorLog {
     private Long id;
 
     @Relation(Relation.Kind.MANY_TO_ONE)
+    @MappedProperty("device_ip")
     private Device device;  // one device can have multiple logs
 
     private long timestamp;

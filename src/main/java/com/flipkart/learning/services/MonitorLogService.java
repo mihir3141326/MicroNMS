@@ -22,7 +22,7 @@ public class MonitorLogService {
         this.deviceRepository = deviceRepository;
     }
 
-    public MonitorLog addLogToDevice(String deviceIp, MonitorLog log) {
+    public void addLogToDevice(String deviceIp, MonitorLog log) {
 
         Optional<Device> device = deviceRepository.findById(deviceIp);
 
@@ -31,7 +31,7 @@ public class MonitorLogService {
             if (log.getTimestamp() == 0) {
                 log.setTimestamp(System.currentTimeMillis());
             }
-            return logRepository.save(log);
+            logRepository.save(log);
         } else {
             throw new IllegalArgumentException("Cannot save log: Device with IP " + deviceIp + " not found!");
         }

@@ -17,19 +17,6 @@ public class MonitorLogController {
         this.logService = logService;
     }
 
-    // Insert a new log (internally used by our plugin to submit monitor log)
-    // POST to http://localhost:8080/monitor/192.168.1.10
-    @Post
-    public HttpResponse<?> addLog(String ip, @Body MonitorLog log) {
-        try {
-            MonitorLog savedLog = logService.addLogToDevice(ip, log);
-            return HttpResponse.created(savedLog);
-        } catch (IllegalArgumentException e) {
-            // Catches the error if the Device IP doesn't exist in the database!
-            return HttpResponse.badRequest(e.getMessage());
-        }
-    }
-
     // latest log
     // GET to http://localhost:8080/monitor/192.168.1.10/
     @Get
