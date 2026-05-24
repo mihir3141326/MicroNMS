@@ -1,23 +1,32 @@
 package com.flipkart.learning.models;
 
+import io.micronaut.data.annotation.GeneratedValue;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.data.annotation.Relation;
 import io.micronaut.serde.annotation.Serdeable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Serdeable
-@Entity
+@MappedEntity("monitor_log")
 public class MonitorLog {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(GeneratedValue.Type.IDENTITY)
     private Long id;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Relation(Relation.Kind.MANY_TO_ONE)
+    private Device device;  // one device can have multiple logs
 
-    public Long getId() {
-        return id;
-    }
+    private long timestamp;
+    private double cpuUsage;
+    private double memoryUsage;
+    private double diskUsage;
+    private long uptime;
+
+    public MonitorLog() {}
+
+
 }
