@@ -1,6 +1,7 @@
 package com.flipkart.learning.controllers;
 
 import com.flipkart.learning.models.MonitorLog;
+import com.flipkart.learning.models.MonitorLogResponse;
 import com.flipkart.learning.services.MonitorLogService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
@@ -20,8 +21,8 @@ public class MonitorLogController {
     // latest log
     // GET to http://localhost:8080/monitor/192.168.1.10/
     @Get
-    public HttpResponse<MonitorLog> getLatestLog(String ip) {
-        Optional<MonitorLog> latestLog = logService.getLatestLogForDevice(ip);
+    public HttpResponse<MonitorLogResponse> getLatestLog(String ip) {
+        Optional<MonitorLogResponse> latestLog = logService.getLatestLogForDevice(ip);
 
         if (latestLog.isPresent()) {
             return HttpResponse.ok(latestLog.get());
@@ -33,16 +34,16 @@ public class MonitorLogController {
     // Get last 24 hr monitoring logs
     // GET to http://localhost:8080/monitor/192.168.1.10/day
     @Get("/day")
-    public HttpResponse<List<MonitorLog>> getLogsForLast24Hours(String ip) {
-        List<MonitorLog> logs = logService.getLogsForLast24Hours(ip);
+    public HttpResponse<List<MonitorLogResponse>> getLogsForLast24Hours(String ip) {
+        List<MonitorLogResponse> logs = logService.getLogsForLast24Hours(ip);
         return HttpResponse.ok(logs);
     }
 
     // Get last week's logs
     // GET to http://localhost:8080/monitor/192.168.1.10/week
     @Get("/week")
-    public HttpResponse<List<MonitorLog>> getLogsForLastWeek(String ip) {
-        List<MonitorLog> logs = logService.getLogsForLastWeek(ip);
+    public HttpResponse<List<MonitorLogResponse>> getLogsForLastWeek(String ip) {
+        List<MonitorLogResponse> logs = logService.getLogsForLastWeek(ip);
         return HttpResponse.ok(logs);
     }
 }

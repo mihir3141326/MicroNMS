@@ -2,6 +2,7 @@ package com.flipkart.learning.services;
 
 import com.flipkart.learning.models.Device;
 import com.flipkart.learning.models.MonitorLog;
+import com.flipkart.learning.models.MonitorLogResponse;
 import com.flipkart.learning.repositories.DeviceRepository;
 import com.flipkart.learning.repositories.MonitorLogRepository;
 import io.micronaut.data.model.Page;
@@ -28,9 +29,6 @@ public class MonitorLogService {
 
         if (device.isPresent()) {
             log.setDevice(device.get());
-            if (log.getTimestamp() == 0) {
-                log.setTimestamp(System.currentTimeMillis());
-            }
             logRepository.save(log);
         } else {
             throw new IllegalArgumentException("Cannot save log: Device with IP " + deviceIp + " not found!");
@@ -38,23 +36,40 @@ public class MonitorLogService {
 
     }
 
-    public Page<MonitorLog> getLogsByDevice(String ip, int pageNumber, int pageSize) {
-        Pageable pageable = Pageable.from(pageNumber, pageSize);
-        return logRepository.findByDeviceIp(ip, pageable);
-    }
-
-    public List<MonitorLog> getLogsForLast24Hours(String ip) {
+    public List<MonitorLogResponse> getLogsForLast24Hours(String ip) {
         long twentyFourHoursAgo = System.currentTimeMillis() - (24 * 60 * 60 * 1000L);
-        return logRepository.findByDeviceIpAndTimestampGreaterThanEquals(ip, twentyFourHoursAgo);
+        List<MonitorLog> monitorLogsList = logRepository.findByDeviceIpAndTimestampGreaterThanEquals(ip, twentyFourHoursAgo);
+        return monitorLogsList.stream().map(monitorLog ->
+            new MonitorLogResponse(
+                    monitorLog.getId(),
+                    monitorLog.getTimestamp(),
+                    monitorLog.getCpuUsage(),
+                    monitorLog.getMemoryUsage(),
+                    monitorLog.getDiskUsage(),
+                    monitorLog.getUptime())).toList();
     }
 
-    public List<MonitorLog> getLogsForLastWeek(String ip) {
+    public List<MonitorLogResponse> getLogsForLastWeek(String ip) {
         // 7 days * 24 hours * 60 mins * 60 secs * 1000 milliseconds
         long oneWeekAgo = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000L);
-        return logRepository.findByDeviceIpAndTimestampGreaterThanEquals(ip, oneWeekAgo);
+        List<MonitorLog> monitorLogsList = logRepository.findByDeviceIpAndTimestampGreaterThanEquals(ip, oneWeekAgo);
+        return monitorLogsList.stream().map(monitorLog ->
+                new MonitorLogResponse(
+                        monitorLog.getId(),
+                        monitorLog.getTimestamp(),
+                        monitorLog.getCpuUsage(),
+                        monitorLog.getMemoryUsage(),
+                        monitorLog.getDiskUsage(),
+                        monitorLog.getUptime())).toList();
     }
 
-    public Optional<MonitorLog> getLatestLogForDevice(String ip) {
-        return logRepository.findFirstByDeviceIpOrderByTimestampDesc(ip);
+    public Optional<MonitorLogResponse> getLatestLogForDevice(String ip) {
+        return logRepository.findFirstByDeviceIpOrderByTimestampDesc(ip).map(monitorLog -> new MonitorLogResponse(
+                monitorLog.getId(),
+                monitorLog.getTimestamp(),
+                monitorLog.getCpuUsage(),
+                monitorLog.getMemoryUsage(),
+                monitorLog.getDiskUsage(),
+                monitorLog.getUptime()));
     }
 }

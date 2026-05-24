@@ -19,7 +19,6 @@ public class DeviceService {
     }
 
     public Device createDevice(Device device) {
-        //TODO create new device entry in scheduler for monitoring
         return deviceRepository.insert(device);
     }
 

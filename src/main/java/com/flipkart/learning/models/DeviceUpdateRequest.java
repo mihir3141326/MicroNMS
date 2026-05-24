@@ -1,10 +1,7 @@
 package com.flipkart.learning.models;
 
 import io.micronaut.serde.annotation.Serdeable;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 
 @Serdeable
 public record DeviceUpdateRequest(
@@ -16,10 +13,12 @@ public record DeviceUpdateRequest(
 
         String tag,
 
+        @NotNull(message = "Port cannot be empty")
         @Positive(message = "Port must be a positive number")
-        long port,
+        Long port,
 
-        @Min(value = 5, message = "Ping interval must be at least 5 seconds")
-        @Max(value = 3600, message = "Ping interval cannot exceed 3600 seconds")
-        long pingIntervalInSec
+        @NotNull(message = "Ping Interval cannot be empty")
+        @Min(value = 5, message = "Ping Interval must be at least 5 seconds")
+        @Max(value = 3600, message = "Ping Interval cannot exceed 3600 seconds")
+        Long pingIntervalInSec
 ) {}

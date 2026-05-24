@@ -90,6 +90,9 @@ public class MonitoringEngineService implements ApplicationEventListener<ServerS
         log.setMemoryUsage(Math.round((99 * random.nextDouble()) * 100.0) / 100.0);
         log.setDiskUsage(Math.round(((99 * random.nextDouble())) * 100.0) / 100.0);
 
+        // current timestamp of monitoring
+        log.setTimestamp(System.currentTimeMillis());
+
         // Mock uptime
         log.setUptime(System.currentTimeMillis() / 1000L);
 
