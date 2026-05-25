@@ -22,6 +22,7 @@ public interface MonitorLogRepository extends CrudRepository<MonitorLog, Long> {
     @Join("device")
     List<MonitorLog> findAll();
 
+    // TODO: pageable logic in case of lots of logs
     @Join("device")
     Page<MonitorLog> findByDeviceIp(String ip, Pageable pageable);
 
